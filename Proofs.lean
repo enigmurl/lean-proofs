@@ -1,4 +1,4 @@
 import «Proofs».Propositions
 import «Proofs».Quantifiers
 import «Proofs».Inductive
-import «Proofs».NatPractice
+import «Proofs».NumPractice
