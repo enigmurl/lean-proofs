@@ -1,5 +1,7 @@
 import Mathlib.Data.Real.Basic
+import Mathlib.Algebra.Ring.Defs
 import Mathlib.Tactic.Ring
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 example (a b c : ℝ) : a * b * c = b * (a * c) := by
   rw [mul_comm a b]
@@ -16,9 +18,6 @@ example (a b c : ℝ) : a * (b * c) = b * (c * a) := by
 
 example (a b c : ℝ) : a * (b * c) = b * (a * c) := by
   rw [mul_comm, mul_assoc, mul_comm a]
-
-example (a b c d e f : ℝ) (h : b * c = e * f) : a * b * c * d = a * e * f * d := by
-  rw [mul_assoc a, h]
 
 example (a b c d : ℝ) (hyp : c = b * a - d) (hyp' : d = a * b) : c = 0 := by
   rw [hyp]
@@ -116,5 +115,104 @@ theorem neg_neg (a : R) : - -a = a := by
   have : -a + (- -a) = -a + a := by
     rw [add_right_neg, add_comm (-a) a, add_right_neg]
   exact add_left_cancel this
+
+theorem self_sub (a : R) : a - a = 0 := by
+  have : a + -a = 0 := add_right_neg a
+  rw [←sub_eq_add_neg a a] at this
+  exact this
+
+theorem self_sub_real (a : ℝ) : a - a = 0 := by
+  have : a + -a = 0 := add_right_neg a
+  exact this
+
+theorem one_add_one_eq_two : 1 + 1 = (2 : R) := by
+  norm_num
+
+theorem two_mul (a : R) : 2 * a = a + a := by
+  rw [←one_add_one_eq_two, add_mul, one_mul]
+
+variable {G : Type*} [Group G]
+
+#check (mul_assoc : ∀ a b c : G, a * b * c = a * (b * c))
+#check (one_mul : ∀ a : G, 1 * a = a)
+#check (mul_left_inv : ∀ a : G, a⁻¹ * a = 1)
+
+
+-- (a^{-1} * a) * a^{-1} = a^{-1}
+-- a^{-1} * (a * a^{-1}) = a^{-1}
+-- sol manual
+theorem mul_right_inv (a : G) : a * a⁻¹ = 1 := by
+  have h : (a * a⁻¹)⁻¹ * (a * a⁻¹ * (a * a⁻¹)) = 1 := by
+    rw [mul_assoc, ← mul_assoc a⁻¹ a, mul_left_inv, one_mul, mul_left_inv]
+  rw [← h, ← mul_assoc, mul_left_inv, one_mul]
+
+theorem mul_one (a : G) : a * 1 = a := by
+  rw [← mul_left_inv a, ← mul_assoc, mul_right_inv, one_mul]
+
+theorem mul_inv_rev (a b : G) : (a * b)⁻¹ = b⁻¹ * a⁻¹ := by
+  rw [← one_mul (b⁻¹ * a⁻¹), ← mul_left_inv (a * b), mul_assoc, mul_assoc, ← mul_assoc b b⁻¹,
+    mul_right_inv, one_mul, mul_right_inv, mul_one]
+
+
+example (h₀ : d ≤ e) : c + Real.exp (a + d) ≤ c + Real.exp (a + e) := by
+  have : a + d ≤ a + e :=
+    add_le_add (le_refl a) h₀
+  apply add_le_add
+  . exact le_refl c
+  . apply Real.exp_le_exp.mpr
+    . exact this
+example : (0 : ℝ) < 1 := by norm_num
+
+example (h : a ≤ b) : Real.log (1 + Real.exp a) ≤ Real.log (1 + Real.exp b) := by
+  have h₀ : 0 < 1 + Real.exp a := by
+    have : 0 < Real.exp a := Real.exp_pos a
+    rw [←zero_add 1]
+    nth_rewrite 1 [←zero_add 0]
+    apply add_lt_add
+    . norm_num
+    . exact this
+  apply Real.log_le_log h₀
+  . apply add_le_add
+    exact le_refl 1
+    exact Real.exp_le_exp.mpr h
+
+example : 0 ≤ a ^ 2 := by
+  exact sq_nonneg a
+
+example (h : a ≤ b) : c - Real.exp b ≤ c - Real.exp a := by
+  apply sub_le_sub
+  . exact le_refl c
+  . exact Real.exp_le_exp.mpr h
+
+theorem two_ab_le {a b : ℝ} : 2 * a * b ≤ a ^ 2 + b ^ 2 := by
+  have h : 0 ≤ a ^ 2 - 2 * a * b + b ^ 2 :=
+  calc
+    a ^ 2 - 2 * a * b + b ^ 2
+    _ = (a - b) ^ 2 := by ring
+    _ ≥ 0 := by apply pow_two_nonneg
+
+  calc
+    2 * a * b = 2 * a * b + 0 := by ring
+    _ ≤ 2 * a * b + (a ^ 2 - 2 * a * b + b ^ 2) := add_le_add (le_refl _) h
+    _ = a ^ 2 + b ^ 2 := by ring
+
+theorem two_ab_le2 {a b : ℝ} : -2 * a * b ≤ a ^ 2 + b ^ 2 := by
+  have h : 0 ≤ a ^ 2 + 2 * a * b + b ^ 2 :=
+  calc
+    a ^ 2 + 2 * a * b + b ^ 2
+    _ = (a + b) ^ 2 := by ring
+    _ ≥ 0 := by apply pow_two_nonneg
+  linarith
+
+example (a b : ℝ) : |a * b| ≤ (a ^ 2 + b ^ 2) / 2 := by
+  apply abs_le'.mpr
+  apply And.intro
+  . have : 2 * a * b ≤ a^2 + b^2 := two_ab_le
+    linarith
+  . have : -2 * a * b ≤ a^2 + b^2 := two_ab_le2
+    linarith
+
+#check abs_le'.mpr
+
 
 end MyRing
