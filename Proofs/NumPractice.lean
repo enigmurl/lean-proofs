@@ -214,5 +214,36 @@ example (a b : ℝ) : |a * b| ≤ (a ^ 2 + b ^ 2) / 2 := by
 
 #check abs_le'.mpr
 
+example (a b : ℝ) : max a b = max b a := by
+  apply le_antisymm
+  repeat
+    apply max_le
+    apply le_max_right
+    apply le_max_left
+
+example (a b : ℝ): min (min a b) c = min a (min b c) := by
+  apply le_antisymm
+  . show min (min a b) c ≤ min a (min b c)
+    apply le_min
+    . have h0 : min a b ≤ a := by apply min_le_left
+      have h1 : min (min a b) c ≤ min a b := by apply min_le_left
+      exact le_trans h1 h0
+    . have h0 : min a b ≤ b := by apply min_le_right
+      have h1 : min (min a b) c ≤ min a b := by apply min_le_left
+      have h2 : min (min a b) c ≤ c := by apply min_le_right
+      apply le_min
+      exact le_trans h1 h0
+      exact h2
+  . show min (min a b) c ≥ min a (min b c)
+    apply le_min
+    . have h0 : min a (min b c) ≤ a := min_le_left a (min b c)
+      have h1 : min a (min b c) ≤ min b c := min_le_right a (min b c)
+      have h2 : min b c ≤ b := min_le_left b c
+      apply le_min
+      exact h0
+      apply le_trans h1 h2
+    apply le_trans
+    apply min_le_right
+    apply min_le_right
 
 end MyRing
