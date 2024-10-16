@@ -1,14 +1,14 @@
 structure Color where
-  (red : Nat) (green : Nat) (blue : Nat)
+ (red : Nat) (green : Nat) (blue : Nat)
   deriving Repr
-
 inductive K
 | mk (red: Nat) (green: Nat) (blue: Nat) : K
-
+deriving Repr
 def k_red (k : K) : Nat :=
   match k with
   | K.mk r _ _ => r
 
+def test (x: ℝ) := x
 def compose (α β γ : Type) (f: α → Option β) (g: β → Option γ) : (α → Option γ) :=
   fun a => match f a with
   | Option.some b => g b
@@ -23,10 +23,15 @@ def prod_inhabited {α β : Type} (a: Inhabited α) (b: Inhabited β) : Inhabite
 def func_inhabited {α β : Type} (a: Inhabited α) : Inhabited (β → α) :=
   Inhabited.mk (fun _ => a.default)
 
-def y := K.mk 255 255 0
+
+def y (_x : Nat) := K.mk 255 255 0
 def yellow := Color.mk 255 255 0
 
--- #eval Color.red yellow
+#check y 1
+#check nat_inhabited
+#eval yellow
+#check Nat.add_comm
+#print Nat
 
 namespace Hidden
 inductive List (α : Type u) where
@@ -49,11 +54,13 @@ theorem append_nil (as : List α) : append as nil = as :=
       (show append nil nil = nil from rfl)
       (fun (a: α) (l1: List α) (ih: append l1 nil = l1) =>
         show append (cons a l1) nil = (cons a l1) from
+          ---
           calc append (cons a l1) nil
             _ = cons a (append l1 nil) := rfl
             _ = cons a l1 := by rw [ih]
       )
-def length {α : Type u} (as : List α) : Nat :=
+
+def length {α : Type u} (as : List α) :=
   match as with
   | nil => 0
   | cons _ bs => Nat.succ (length bs)
@@ -61,6 +68,7 @@ def length {α : Type u} (as : List α) : Nat :=
 theorem length_concat {α : Type u} (as bs : List α) : length (append as bs) = length as + length bs :=
   List.recOn (motive := fun l => length (append l bs) = length l + length bs)
     as
+
     (calc (nil.append bs).length
       _ = (bs.length) := by rw [nil_append]
       _ = bs.length + 0 := rfl
@@ -68,6 +76,7 @@ theorem length_concat {α : Type u} (as bs : List α) : length (append as bs) = 
       _ = nil.length + bs.length := by rw [Nat.add_comm]
     )
     (fun (a: α) (as : List α) (ih: length (append as bs) = length as + length bs) =>
+
         calc length (append (cons a as) bs)
           _ = length (cons a (append as bs)) := rfl
           _ = Nat.succ (length (append as bs)) := rfl

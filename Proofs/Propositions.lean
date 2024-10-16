@@ -7,16 +7,23 @@ theorem p_and_q : p → q → p ∧ q :=
 
 theorem commutativity_or (both: p ∨ q) : q ∨ p :=
   Or.elim both
+
     (fun (hp: p) => Or.inr hp)
-    (fun (hq: q) => Or.inl hq)
+
+    ( fun (hq: q) =>
+    
+        Or.inl hq)
 
 example : (p ∧ q) ∧ r ↔ p ∧ (q ∧ r) :=
   Iff.intro
+
     (fun (hpqr: (p ∧ q) ∧ r) =>
+
         have hpq: p ∧ q := hpqr.left
         have hp: p := hpq.left
         have hq: q := hpq.right
         have hr: r := hpqr.right
+
         And.intro hp (And.intro hq hr)
     )
     (fun (hpqr: p ∧ (q ∧ r)) =>
@@ -26,3 +33,4 @@ example : (p ∧ q) ∧ r ↔ p ∧ (q ∧ r) :=
         have hr: r := hqr.right
         And.intro (And.intro hp hq) hr
     )
+
