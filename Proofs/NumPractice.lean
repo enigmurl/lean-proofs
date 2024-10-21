@@ -111,11 +111,16 @@ theorem eq_neg_of_add_eq_zero {a b : R} (h : a + b = 0) : a = -b := by
   exact add_right_cancel this
 
 theorem neg_zero : (-0 : R) = 0 := by
+  ---
   apply neg_eq_of_add_eq_zero
   rw [add_zero]
 
+#check neg_zero
+
+
 theorem neg_neg (a : R) : - -a = a := by
   have : -a + (- -a) = -a + a := by
+    ---
     rw [add_right_neg, add_comm (-a) a, add_right_neg]
   exact add_left_cancel this
 
@@ -137,7 +142,7 @@ theorem two_mul (a : R) : 2 * a = a + a := by
 variable {G : Type*} [Group G]
 
 #check (mul_assoc : ∀ a b c : G, a * b * c = a * (b * c))
-#check (one_mul : ∀ a : G, 1 * a = a)
+#check abs_le_abs
 #check (mul_left_inv : ∀ a : G, a⁻¹ * a = 1)
 
 
@@ -187,11 +192,8 @@ example : 0 ≤ a ^ 2 := by
   exact sq_nonneg a
 
 example (h : a ≤ b) : c - Real.exp b ≤ c - Real.exp a := by
-  -- :
   apply sub_le_sub
-  -- :
   . exact le_refl c
-  -- :
   . exact Real.exp_le_exp.mpr h
 
 theorem two_ab_le {a b : ℝ} : 2 * a * b ≤ a ^ 2 + b ^ 2 := by
@@ -220,11 +222,10 @@ example (a b : ℝ) : |a * b| ≤ (a ^ 2 + b ^ 2) / 2 := by
   apply And.intro
   . have : 2 * a * b ≤ a^2 + b^2 := two_ab_le
     linarith
-  /- -/
   . have : -2 * a * b ≤ a^2 + b^2 := two_ab_le2
     linarith
-
-#check abs_le'.mpr
+ 
+#check abs_le'
 
 example (a b : ℝ) : max a b = max b a := by
   apply le_antisymm
@@ -260,12 +261,12 @@ example (a b : ℝ): min (min a b) c = min a (min b c) := by
     apply min_le_right
 
 theorem aux (a b c : ℝ) : min a b + c ≤ min (a + c) (b + c) := by
-  -- :
+  ---
   apply le_min
-  -- :
   have : min a b ≤ a := by apply min_le_left
-  apply add_le_add this (le_refl c)
-  -- :
+  apply add_le_add 
+  exact this 
+  exact (le_refl c)
   have : min a b ≤ b := by apply min_le_right
   apply add_le_add this (le_refl c)
 
@@ -278,22 +279,18 @@ example (a b c : ℝ): min a b + c = min (a + c) (b + c) := by
     sub_eq_add_neg (b + c) c, add_neg_cancel_right b c] at h1
   linarith
 
-#check (abs_add : ∀ a b : ℝ, |a + b| ≤ |a| + |b|)
+#check abs
 example {a b : ℝ} : |a| - |b| ≤ |a - b| := by
-  -- :
   have : |a - b + b| ≤ |a - b| + |b| := abs_add (a - b) b
   rw [sub_add_cancel] at this
   -- :
   linarith
   
 example {x y : ℕ} (h : x ∣ w) : x ∣ y * (x * z) + x ^ 2 + w ^ 2 := by
-  -- :
+  ---
   apply dvd_add
-  -- :
   apply dvd_add
-  -- :
   rw [mul_comm, mul_assoc]
-  -- :
   exact dvd_mul_right x (z * y)
   apply dvd_mul_left
   rw [pow_two]
@@ -302,6 +299,7 @@ example {x y : ℕ} (h : x ∣ w) : x ∣ y * (x * z) + x ^ 2 + w ^ 2 := by
 
 example {m n : ℕ}: Nat.gcd m n = Nat.gcd n m := by
   apply Nat.dvd_antisymm
+  ---
   repeat
   apply Nat.dvd_gcd
   . apply Nat.gcd_dvd_right
@@ -312,7 +310,6 @@ end MyRing
 section
 variable {α : Type*} [Lattice α]
 variable (x y z : α)
-
 
 example : x ⊓ y = y ⊓ x := by
   have x_inf_y_le_y_inf_x (u v : α) : (u ⊓ v ≤ v ⊓ u) := by
@@ -377,7 +374,6 @@ example (h : a ≤ b) (h' : 0 ≤ c) : a * c ≤ b * c := by
   have this :=
     mul_nonneg h2 h'
   rw [sub_mul] at this
-  -- :
   have := add_le_add_right this (a * c)
   rw [sub_add, sub_self, sub_zero, zero_add] at this
   exact this
@@ -404,13 +400,17 @@ example (x y : X) : 0 ≤ dist x y := by
 
 example : ∀ x : ℕ, x = 1 ∨ x ≠ 1 := by
   intro x
-  -- :
+  ---
   cases Classical.em (x = 1)
   case inl hp => 
-    -- :
+    ---
     exact Or.inl hp
   case inr hp => 
-    -- :
+    ---
     exact eq_or_ne x 1
+
+example : 1 + 1  + 1 + 1 + 1 + 1+ 1 + 1 + 1 + 1 + 1 + 1 +  1 + 1  + 1 + 1 + 1 + 1+ 1 + 1 + 1 + 1 + 1 = 7 := 
+    ---
+    _
 
 end

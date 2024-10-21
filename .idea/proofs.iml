@@ -3,6 +3,13 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/.lake/build/" />
+      <excludeFolder url="file://$MODULE_DIR$/.lake/packages/Qq/.lake/build/" />
+      <excludeFolder url="file://$MODULE_DIR$/.lake/packages/aesop/.lake/build/" />
+      <excludeFolder url="file://$MODULE_DIR$/.lake/packages/batteries/.lake/build/" />
+      <excludeFolder url="file://$MODULE_DIR$/.lake/packages/importGraph/.lake/build/" />
+      <excludeFolder url="file://$MODULE_DIR$/.lake/packages/mathlib/.lake/build/" />
+      <excludeFolder url="file://$MODULE_DIR$/.lake/packages/proofwidgets/.lake/build/" />
       <excludePattern pattern=".olean" />
       <excludePattern pattern=".ilean" />
       <excludePattern pattern=".c" />
