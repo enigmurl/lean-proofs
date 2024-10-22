@@ -48,7 +48,7 @@ example : (a + b) * (c + d) = a * c + a * d + b * c + b * d :=
 
 example (a b : ℝ) : (a + b) * (a - b) = a ^ 2 - b ^ 2 :=
   have q := 1
-  
+
   calc (a + b) * (a - b)
     _ = a * (a - b) + b * (a - b) := add_mul a b (a - b)
     _ = a * a - a * b + b * (a - b) := by rw [mul_sub]
@@ -213,7 +213,7 @@ theorem two_ab_le2 {a b : ℝ} : -2 * a * b ≤ a ^ 2 + b ^ 2 := by
   calc
     a ^ 2 + 2 * a * b + b ^ 2
     _ = (a + b) ^ 2 := by ring
-    
+
     _ ≥ 0 := by apply pow_two_nonneg
   linarith
 
@@ -224,14 +224,18 @@ example (a b : ℝ) : |a * b| ≤ (a ^ 2 + b ^ 2) / 2 := by
     linarith
   . have : -2 * a * b ≤ a^2 + b^2 := two_ab_le2
     linarith
- 
+
 #check abs_le'
 
 example (a b : ℝ) : max a b = max b a := by
+  ---
   apply le_antisymm
   repeat
+    ---
     apply max_le
+    ---
     apply le_max_right
+    ---
     apply le_max_left
 
 example (a b : ℝ): min (min a b) c = min a (min b c) := by
@@ -264,8 +268,8 @@ theorem aux (a b c : ℝ) : min a b + c ≤ min (a + c) (b + c) := by
   ---
   apply le_min
   have : min a b ≤ a := by apply min_le_left
-  apply add_le_add 
-  exact this 
+  apply add_le_add
+  exact this
   exact (le_refl c)
   have : min a b ≤ b := by apply min_le_right
   apply add_le_add this (le_refl c)
@@ -282,10 +286,10 @@ example (a b c : ℝ): min a b + c = min (a + c) (b + c) := by
 #check abs
 example {a b : ℝ} : |a| - |b| ≤ |a - b| := by
   have : |a - b + b| ≤ |a - b| + |b| := abs_add (a - b) b
+  ---
   rw [sub_add_cancel] at this
-  -- :
   linarith
-  
+
 example {x y : ℕ} (h : x ∣ w) : x ∣ y * (x * z) + x ^ 2 + w ^ 2 := by
   ---
   apply dvd_add
@@ -354,7 +358,7 @@ theorem a_le_b (h : a ≤ b) : 0 ≤ b - a := by
   -- :
   suffices a + -a ≤ b + -a by
     -- :
-    
+
     rw [add_right_neg] at this
     rw [sub_eq_add_neg]
     -- :
@@ -391,7 +395,7 @@ variable (x y z : X)
 example (x y : X) : 0 ≤ dist x y := by
   have : dist x x ≤ dist x y + dist y x := dist_triangle x y x
   rw [dist_self x, dist_comm y x, ←two_mul] at this
-  -- : 
+  -- :
   apply nonneg_of_mul_nonneg_right
     this
     zero_lt_two
@@ -402,14 +406,14 @@ example : ∀ x : ℕ, x = 1 ∨ x ≠ 1 := by
   intro x
   ---
   cases Classical.em (x = 1)
-  case inl hp => 
+  case inl hp =>
     ---
     exact Or.inl hp
-  case inr hp => 
+  case inr hp =>
     ---
     exact eq_or_ne x 1
 
-example : 1 + 1  + 1 + 1 + 1 + 1+ 1 + 1 + 1 + 1 + 1 + 1 +  1 + 1  + 1 + 1 + 1 + 1+ 1 + 1 + 1 + 1 + 1 = 7 := 
+example : 1 + 1  + 1 + 1 + 1 + 1+ 1 + 1 + 1 + 1 + 1 + 1 +  1 + 1  + 1 + 1 + 1 + 1+ 1 + 1 + 1 + 1 + 1 = 7 :=
     ---
     _
 
