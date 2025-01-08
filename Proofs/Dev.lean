@@ -3,6 +3,9 @@ import Mathlib.Algebra.Ring.Defs
 import Mathlib.Tactic.Ring
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
+#check 4
+#check ℕ
+
 variable {R : Type*} [StrictOrderedRing R]
 variable (a b c : R)
 
@@ -44,6 +47,6 @@ def test_1 :=
 def test_2 : ℕ := 4
 def test_3 {a : ℕ}:= 
     a 
-def test_4 {a : ℕ} (b : ℝ) : ℕ := a 
+def test_4 {a : ℕ} (_b : ℝ) : ℕ := a 
 def test_5 (b : ℝ)      := b
 def test_6 (a : ℕ) : ℕ := a

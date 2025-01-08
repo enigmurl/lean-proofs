@@ -73,11 +73,14 @@ variable (shaves : men → men → Prop)
 
 example (h : ∀ x : men, shaves barber x ↔ ¬ shaves x x) : False :=
   Or.elim (em (shaves barber barber))
+    ---
     (fun s: shaves barber barber =>
+      ---
       have ns: ¬ shaves barber barber := (h barber).mp s
       ns s
     )
+    ---
     (fun ns: ¬ shaves barber barber =>
-      have s: shaves barber barber := (h barber).mpr ns
+      have s := (h barber).mpr ns
       ns s
     )

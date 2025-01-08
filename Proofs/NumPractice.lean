@@ -196,36 +196,57 @@ example (h : a ≤ b) : c - Real.exp b ≤ c - Real.exp a := by
   . exact le_refl c
   . exact Real.exp_le_exp.mpr h
 
-theorem two_ab_le {a b : ℝ} : 2 * a * b ≤ a ^ 2 + b ^ 2 := by
-  have h : 0 ≤ a ^ 2 - 2 * a * b + b ^ 2 :=
-  calc
-    a ^ 2 - 2 * a * b + b ^ 2
-    _ = (a - b) ^ 2 := by ring
-    _ ≥ 0 := by apply pow_two_nonneg
-  /- -/
-  calc
-    2 * a * b = 2 * a * b + 0 := by ring
-    _ ≤ 2 * a * b + (a ^ 2 - 2 * a * b + b ^ 2) := add_le_add (le_refl _) h
-    _ = a ^ 2 + b ^ 2 := by ring
-
+/--- -2ab <= a^2 + b^2 ---/
 theorem two_ab_le2 {a b : ℝ} : -2 * a * b ≤ a ^ 2 + b ^ 2 := by
   have h : 0 ≤ a ^ 2 + 2 * a * b + b ^ 2 :=
   calc
     a ^ 2 + 2 * a * b + b ^ 2
     _ = (a + b) ^ 2 := by ring
-
     _ ≥ 0 := by apply pow_two_nonneg
   linarith
+  
+theorem two_ab_le {a b : ℝ} : 2 * a * b ≤ a ^ 2 + b ^ 2 := by
+  have h : 0 ≤ a ^ 2 - 2 * a * b + b ^ 2 :=
+  ---
+  calc
+    a ^ 2 - 2 * a * b + b ^ 2
+    _ = (a - b) ^ 2 := by ring
+    _ ≥ 0 := by apply pow_two_nonneg
+  ---
+  calc
+    2 * a * b = 2 * a * b + 0 := by ring
+    _ ≤ 2 * a * b + (a ^ 2 - 2 * a * b + b ^ 2) := add_le_add (le_refl _) h
+    _ = a ^ 2 + b ^ 2 := by ring
 
+
+
+
+-- 1. expressions like #check are shown inline
+#check And.intro
+#eval 2 + 3
+
+
+-- 2. Automatic syntax highlighting
 example (a b : ℝ) : |a * b| ≤ (a ^ 2 + b ^ 2) / 2 := by
   apply abs_le'.mpr
+  -- 3. press `Control I` to automatically add goal hints to a line, like below
+  ---
   apply And.intro
+  ---
   . have : 2 * a * b ≤ a^2 + b^2 := two_ab_le
     linarith
-  . have : -2 * a * b ≤ a^2 + b^2 := two_ab_le2
+  ---
+  . have : -2 * a * b ≤ a^2 + b^2 := two_ab_le -- 4. autocompletion
     linarith
+    
 
-#check abs_le'
+
+-- 5. Get expressions like ℝ using \R<space>
+-- 6. Look at the infoview to the right
+
+
+
+
 
 example (a b : ℝ) : max a b = max b a := by
   ---
@@ -251,9 +272,8 @@ example (a b : ℝ): min (min a b) c = min a (min b c) := by
       apply le_min
       exact le_trans h1 h0
       exact h2
-  . show min (min a b) c ≥ min a (min b c)
-    apply le_min
-        /- -/
+  ---
+  . apply le_min
     . have h0 : min a (min b c) ≤ a := min_le_left a (min b c)
       have h1 : min a (min b c) ≤ min b c := min_le_right a (min b c)
       have h2 : min b c ≤ b := min_le_left b c
@@ -291,13 +311,15 @@ example {a b : ℝ} : |a| - |b| ≤ |a - b| := by
   linarith
 
 example {x y : ℕ} (h : x ∣ w) : x ∣ y * (x * z) + x ^ 2 + w ^ 2 := by
+  apply dvd_add
+  apply dvd_add
   ---
-  apply dvd_add
-  apply dvd_add
   rw [mul_comm, mul_assoc]
   exact dvd_mul_right x (z * y)
   apply dvd_mul_left
+  ---
   rw [pow_two]
+  ---
   apply dvd_mul_of_dvd_left
   exact h
 
@@ -305,8 +327,11 @@ example {m n : ℕ}: Nat.gcd m n = Nat.gcd n m := by
   apply Nat.dvd_antisymm
   ---
   repeat
+  ---
   apply Nat.dvd_gcd
+  ---
   . apply Nat.gcd_dvd_right
+  ---
   . apply Nat.gcd_dvd_left
 
 end MyRing
@@ -328,22 +353,23 @@ example : x ⊓ y ⊓ z = x ⊓ (y ⊓ z) := by
   sorry
 
 example : x ⊔ y = y ⊔ x := by
-  -- :
+  ---
   have x_sup_y_le_y_sup_x (u v : α) : (u ⊔ v ≤ v ⊔ u) := by
-    -- :
+    ---
     apply sup_le
+    ---
     exact le_sup_right
+    ---
     exact le_sup_left
-  -- :
+  ---
   apply le_antisymm
-  -- :
+  ---
   exact x_sup_y_le_y_sup_x x y
-  -- :
+  ---
   exact x_sup_y_le_y_sup_x y x
 
 example : x ⊔ y ⊔ z = x ⊔ (y ⊔ z) := by
   sorry
-
 
 end
 
@@ -355,21 +381,20 @@ variable (a b c : R)
 #check (mul_pos : 0 < a → 0 < b → 0 < a * b)
 
 theorem a_le_b (h : a ≤ b) : 0 ≤ b - a := by
-  -- :
+  ---
   suffices a + -a ≤ b + -a by
-    -- :
-
+    ---
     rw [add_right_neg] at this
     rw [sub_eq_add_neg]
-    -- :
+    ---
     exact this
-  -- :
+  ---
   apply add_le_add_right
   exact h
 
 example (h: 0 ≤ b - a) : a ≤ b := by
   have : 0 + a ≤ b - a + a := add_le_add_right h a
-  -- :
+  ---
   rw [zero_add, sub_add, sub_self, sub_zero] at this
   exact this
 
@@ -412,9 +437,5 @@ example : ∀ x : ℕ, x = 1 ∨ x ≠ 1 := by
   case inr hp =>
     ---
     exact eq_or_ne x 1
-
-example : 1 + 1  + 1 + 1 + 1 + 1+ 1 + 1 + 1 + 1 + 1 + 1 +  1 + 1  + 1 + 1 + 1 + 1+ 1 + 1 + 1 + 1 + 1 = 7 :=
-    ---
-    _
 
 end
