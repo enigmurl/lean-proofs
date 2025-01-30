@@ -47,7 +47,7 @@ example : (a + b) * (c + d) = a * c + a * d + b * c + b * d :=
     _ = a * c + a * d + b * c + b * d := by rw [add_assoc, ←add_assoc (a * d), ← add_assoc, ← add_assoc]
 
 example (a b : ℝ) : (a + b) * (a - b) = a ^ 2 - b ^ 2 :=
-  have q := 1
+  have _ := 1
 
   calc (a + b) * (a - b)
     _ = a * (a - b) + b * (a - b) := add_mul a b (a - b)
@@ -236,7 +236,7 @@ example (a b : ℝ) : |a * b| ≤ (a ^ 2 + b ^ 2) / 2 := by
   . have : 2 * a * b ≤ a^2 + b^2 := two_ab_le
     linarith
   ---
-  . have : -2 * a * b ≤ a^2 + b^2 := two_ab_le -- 4. autocompletion
+  . have : -2 * a * b ≤ a^2 + b^2 := two_ab_le2 -- 4. autocompletion
     linarith
     
 
@@ -349,9 +349,6 @@ example : x ⊓ y = y ⊓ x := by
   exact x_inf_y_le_y_inf_x x y
   exact x_inf_y_le_y_inf_x y x
 
-example : x ⊓ y ⊓ z = x ⊓ (y ⊓ z) := by
-  sorry
-
 example : x ⊔ y = y ⊔ x := by
   ---
   have x_sup_y_le_y_sup_x (u v : α) : (u ⊔ v ≤ v ⊔ u) := by
@@ -367,9 +364,6 @@ example : x ⊔ y = y ⊔ x := by
   exact x_sup_y_le_y_sup_x x y
   ---
   exact x_sup_y_le_y_sup_x y x
-
-example : x ⊔ y ⊔ z = x ⊔ (y ⊔ z) := by
-  sorry
 
 end
 
